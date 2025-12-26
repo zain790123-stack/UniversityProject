@@ -1,0 +1,34 @@
+# Eclipse
+.classpath
+.project
+.settings/
+bin/
+.metadata/
+
+# Build outputs
+build/
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# Logs
+*.log
+
+# IDE
+*.tmp
+*.bak
+*.swp
+*~.nib
+
+# Database
+*.db
+*.sqlite
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Server-specific
+Servers/
