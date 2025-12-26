@@ -115,6 +115,7 @@ input[type="text"]:focus {
     border-radius: 10px;
     text-align: center;
     margin-top: 15px;
+    margin-bottom: 15px;
     font-size: 15px;
     display: none;
 }
@@ -134,7 +135,7 @@ input[type="text"]:focus {
     from { opacity: 1; }
     to { opacity: 0; }
 }
-.fade-out { animation: fadeOut 1s forwards; }
+.fade-out { animation: fadeOut 8s forwards; }
 
 </style>
 </head>
@@ -156,7 +157,7 @@ input[type="text"]:focus {
     <button type="submit" class="btn-check">Check Status</button>
 </form>
 
-<p class="redirect"><a href="loinIndex.jsp">Back</a></p>
+<p class="redirect"><a href="loginIndex.jsp">Back</a></p>
 
 </div>
 
@@ -184,17 +185,17 @@ async function handleSubmit(event) {
         if (data.status) {
             statusBox.innerHTML = "Status: <strong>" + data.status + "</strong>";
             statusBox.style.display = 'block';
-            setTimeout(() => statusBox.classList.add("fade-out"), 4000);
+            setTimeout(() => statusBox.classList.add("fade-out"), 10000);
         } else if (data.error) {
             errorBox.innerHTML = data.error;
             errorBox.style.display = 'block';
-            setTimeout(() => errorBox.classList.add("fade-out"), 4000);
+            setTimeout(() => errorBox.classList.add("fade-out"), 10000);
         }
 
     } catch (error) {
         errorBox.innerHTML = "Something went wrong. Try again.";
         errorBox.style.display = 'block';
-        setTimeout(() => errorBox.classList.add("fade-out"), 4000);
+        setTimeout(() => errorBox.classList.add("fade-out"), 10000);
     }
 }
 </script>

@@ -364,7 +364,7 @@ Join ZTailor Craft as an affiliate tailor and grow your customer base.
 <div style="width:300px;background:#1a1a1a;padding:25px;border-radius:12px">
 <h3 style="color:#ff6147">Requirements</h3>
 <ul style="text-align:left;line-height:1.8">
-<li>Valid ID Proof</li>
+<li>Valid Picture</li>
 <li>1+ Year Experience</li>
 <li>Dedicated</li>
 <li>Basic Tools</li>

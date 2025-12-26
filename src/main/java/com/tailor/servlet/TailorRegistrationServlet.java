@@ -93,7 +93,7 @@ public class TailorRegistrationServlet extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        String uploadDir = "C:\\Users\\Zain Ul Abidin\\git\\repository\\ZTailor\\src\\main\\webapp\\uploads\\TailorPictures"; 
+        String uploadDir = "C:\\Users\\Zain Ul Abidin\\eclipse-workspace\\ZTailor\\src\\main\\webapp\\uploads\\TailorPictures"; 
         File uploadFolder = new File(uploadDir);
         if (!uploadFolder.exists()) {
             uploadFolder.mkdirs();

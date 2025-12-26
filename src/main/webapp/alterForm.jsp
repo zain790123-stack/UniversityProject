@@ -296,11 +296,11 @@ input.invalid, textarea.invalid{
 
     <label>Your Phone Number</label>
     <input type="text" id="customer-phone" name="customer-phone" placeholder="Enter your phone number" required oninput="validatePhone(this)">
-    <span id="phone-error" class="error-msg">Phone must be 13–14 digits</span>
+    <span id="phone-error" class="error-msg">Phone must be 11–14 digits</span>
 
     <label>Your WhatsApp Number</label>
     <input type="text" id="customer-whatsapp" name="customer-whatsapp" placeholder="Enter your WhatsApp number" oninput="validatePhone(this)">
-    <span id="whatsapp-error" class="error-msg">WhatsApp must be 13–14 digits</span>
+    <span id="whatsapp-error" class="error-msg">WhatsApp must be 11–14 digits</span>
 
     <label>Your Address</label>
     <textarea name="customer-address" rows="3" required placeholder="Enter your address"></textarea>
@@ -326,7 +326,7 @@ input.invalid, textarea.invalid{
     <p style="color:#ff4f4f; text-align:center; margin-top:15px; font-weight:bold;"><%= errorMsg %></p>
     <% } %>
 
-   <p class="redirect">Back to home? <a href="loginIndex.jsp">Home</a></p>
+   <p class="redirect">Back to home? <a href="loginIndex.jsp">Back</a></p>
 
    </div>
 
@@ -376,7 +376,7 @@ function validateName(){
 function validatePhone(input){
     const val = input.value.trim();
     const error = input.id==='customer-phone'?document.getElementById('phone-error'):document.getElementById('whatsapp-error');
-    if(/^\d{13,14}$/.test(val)){
+    if(/^\d{11,14}$/.test(val)){
         input.classList.add('valid');
         input.classList.remove('invalid');
         error.style.display='none';
@@ -397,13 +397,13 @@ document.getElementById('alterForm').addEventListener('submit', function(e){
         document.getElementById('name-error').style.display='block';
         return;
     }
-    if(!/^\d{13,14}$/.test(phone.value)){
+    if(!/^\d{11,14}$/.test(phone.value)){
         e.preventDefault();
         phone.classList.add('invalid');
         document.getElementById('phone-error').style.display='block';
         return;
     }
-    if(whatsapp.value && !/^\d{13,14}$/.test(whatsapp.value)){
+    if(whatsapp.value && !/^\d{11,14}$/.test(whatsapp.value)){
         e.preventDefault();
         whatsapp.classList.add('invalid');
         document.getElementById('whatsapp-error').style.display='block';

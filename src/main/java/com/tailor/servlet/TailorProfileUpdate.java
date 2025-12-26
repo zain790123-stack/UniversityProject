@@ -43,7 +43,7 @@ public class TailorProfileUpdate extends HttpServlet {
                     "jdbc:mysql://localhost:3306/tailor_db", "root", "12345")) {
 
                 if (fileName != null && !fileName.isEmpty()) {
-                    String uploadPath = "C:\\Users\\Zain Ul Abidin\\git\\repository\\ZTailor\\src\\main\\webapp\\uploads\\TailorPictures\\" + fileName;
+                    String uploadPath = "C:\\Users\\Zain Ul Abidin\\eclipse-workspace\\ZTailor\\src\\main\\webapp\\uploads\\TailorPictures" + fileName;
                     pic.write(uploadPath);
 
                     String sql = "UPDATE tailors SET phone=?, address=?, specialty=?, experience=?, picture_path=? WHERE id=?";

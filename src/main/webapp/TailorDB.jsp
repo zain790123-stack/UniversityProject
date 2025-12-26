@@ -1044,7 +1044,7 @@ tr:hover {
                         </td>
                         <td>
                             <% if (clientImage != null && !clientImage.isEmpty()) { %>
-                            <img src="uploads/custom_tailor/clothPicture/<%= clientImage %>" 
+                            <img src="uploads/custom_tailor/CustomerPctures/<%= clientImage %>" 
                                  class="img-thumb-small" 
                                  onclick="viewImage(this.src, 'Client Image')"
                                  onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHJ4PSI0IiBmaWxsPSIjMDIwNjE3Ii8+PHBhdGggZD0iTTEwIDEwSDMwVjMwSDEwVjEwWiIgZmlsbD0iIzYwYTVmYSIvPjwvc3ZnPg=='">

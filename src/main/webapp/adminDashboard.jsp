@@ -1328,7 +1328,7 @@ finally {
                         <td><%= order.get("name") %></td>
                         <td><%= order.get("phone") %></td>
                         <td><%= order.get("product_name") %></td>
-                        <td>₹<%= order.get("price") %></td>
+                        <td>Rs  <%= order.get("price") %></td>
                         <td class="text-preview"><%= order.get("address") %></td>
                         <td><%= order.get("payment_method") %></td>
                         <td><%= order.get("order_id") %></td>
@@ -2165,7 +2165,7 @@ async function viewDetails(id, table, database, buttonElement) {
                             '<div>' +
                                 '<h4 style="color: var(--primary); margin-bottom: 10px;">Order Details</h4>' +
                                 '<p><strong>Product:</strong> ' + data.product_name + '</p>' +
-                                '<p><strong>Price:</strong> ₹' + data.price + '</p>' +
+                                '<p><strong>Price:</strong> Rs ' + data.price + '</p>' +
                                 '<p><strong>Payment:</strong> ' + data.payment_method + '</p>' +
                                 '<p><strong>Status:</strong> <span class="status-badge status-' + data.status.toLowerCase() + '">' + data.status.toUpperCase() + '</span></p>' +
                                 '<p><strong>Approved:</strong> ' + (data.approval_date || 'Not approved') + '</p>' +

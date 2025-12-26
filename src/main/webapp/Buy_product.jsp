@@ -262,7 +262,7 @@ padding-bottom:10px;
         </ul>
     </div>
     <p class="redirect">Back to home page? <a href="loginIndex.jsp">Home</a></p>
-    <p>&copy; 2025 ZTailor Craft. All rights reserved.</p>
+    <p>&copy; 2025 ZTailor Craft | All rights reserved.</p>
 </footer>
 
 </body>

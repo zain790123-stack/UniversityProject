@@ -60,7 +60,6 @@ public class submitOrder extends HttpServlet {
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
 
-        // Neon Dark UI
         out.println("<!DOCTYPE html>");
         out.println("<html lang='en'><head><meta charset='UTF-8'>");
         out.println("<meta name='viewport' content='width=device-width, initial-scale=1.0'>");

@@ -165,7 +165,7 @@ window.onload = function () {
         const error = document.getElementById("phoneError");
         const val = phoneInput.value.replace(/\D/g,'');
         phoneInput.value = val;
-        if(val.length<13 || val.length>14) {
+        if(val.length<11 || val.length>14) {
             error.style.display="block";
         } else {
             error.style.display="none";
@@ -177,7 +177,7 @@ window.onload = function () {
             const error = document.getElementById("whatsappError");
             const val = whatsappInput.value.replace(/\D/g,'');
             whatsappInput.value = val;
-            if(val.length<13 || val.length>14) {
+            if(val.length<11 || val.length>14) {
                 error.style.display="block";
             } else {
                 error.style.display="none";
@@ -197,8 +197,8 @@ window.onload = function () {
         <div id="nameError" class="error-msg">Name must contain only alphabets!</div>
 
         <label for="phone">Phone Number:</label>
-        <input type="tel" id="phone" name="phone" required placeholder="13-14 digits">
-        <div id="phoneError" class="error-msg">Phone number must be 13-14 digits!</div>
+        <input type="tel" id="phone" name="phone" required placeholder="11-14 digits">
+        <div id="phoneError" class="error-msg">Phone number must be 11-14 digits!</div>
 
         <label for="address">Address:</label>
         <textarea id="address" name="address" rows="3" required></textarea>

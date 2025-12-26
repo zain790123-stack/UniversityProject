@@ -44,7 +44,7 @@ public class AlterationFormServlet extends HttpServlet {
         List<String> l=new LinkedList<String>();
 
        
-        String uploadDir = "C:\\Users\\Zain Ul Abidin\\git\\repository\\ZTailor\\src\\main\\webapp\\uploads\\alteration"; 
+        String uploadDir = "C:\\Users\\Zain Ul Abidin\\eclipse-workspace\\ZTailor\\src\\main\\webapp\\uploads\\alteration"; 
         File uploadFolder = new File(uploadDir);
         if (!uploadFolder.exists()) {
             uploadFolder.mkdirs();

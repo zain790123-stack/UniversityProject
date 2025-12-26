@@ -1303,7 +1303,7 @@ try {
                         <td><%= order.get("name") %></td>
                         <td><%= order.get("phone") %></td>
                         <td><%= order.get("product_name") %></td>
-                        <td>₹<%= order.get("price") %></td>
+                        <td>Rs <%= order.get("price") %></td>
                         <td><%= order.get("payment_method") %></td>
                         <td><span class="status-badge <%= statusClass %>"><%= status.toUpperCase() %></span></td>
                         <td><%= approvalDateStr %></td>
