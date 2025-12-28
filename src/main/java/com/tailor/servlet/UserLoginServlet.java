@@ -16,26 +16,40 @@ import com.tailor.Util.DBUtil;
 @WebServlet("/UserLoginServlet")
 public class UserLoginServlet extends HttpServlet {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        try (Connection con = DBUtil.getConnection()) {
-            PreparedStatement ps = con.prepareStatement(
-                "SELECT * FROM signup_login WHERE email=? AND password=?");
+    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
+
+        boolean validUser = false;
+        String username = null;
+
+        try (Connection con = DBUtil.getConnection();
+             PreparedStatement ps = con.prepareStatement(
+                     "SELECT username FROM signup_login WHERE email=? AND password=?")) {
+
             ps.setString(1, req.getParameter("email"));
             ps.setString(2, req.getParameter("password"));
 
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                HttpSession s = req.getSession();
-                s.setAttribute("userType", "user");
-                s.setAttribute("username", rs.getString("username"));
-                res.sendRedirect("loginIndex.jsp");
-                return;
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    validUser = true;
+                    username = rs.getString("username");
+                }
             }
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        req.getSession().setAttribute("error", "Invalid credentials");
-        res.sendRedirect("unifiedLogin.jsp");
+        if (validUser) {
+            HttpSession session = req.getSession(true);
+            session.setAttribute("userType", "user");
+            session.setAttribute("username", username);
+
+            //  SAFE redirect
+            res.sendRedirect(req.getContextPath() + "/loginIndex.jsp");
+        } else {
+            req.getSession().setAttribute("error", "Invalid credentials");
+            res.sendRedirect(req.getContextPath() + "/unifiedLogin.jsp");
+        }
     }
 }
