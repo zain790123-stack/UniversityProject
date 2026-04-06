@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css">
-<link rel="stylesheet" type="text/css" href="css/style.css">
+<link rel="stylesheet" href="<%= application.getContextPath() %>/css/style.css">
 
 </head>
 <body>
@@ -117,7 +117,7 @@ Join ZTailor Craft as an affiliate tailor and grow your customer base.
 <div style="display:flex;justify-content:center;gap:25px;flex-wrap:wrap;margin-top:40px">
 <div style="width:300px;background:#1a1a1a;padding:25px;border-radius:12px">
 <h3 style="color:#ff6147">Requirements</h3>
-<ul style="text-align:left;line-height:1.8">
+<ul style="text-align:center;line-height:1.8;list-style:none">
 <li>Valid Picture</li>
 <li>1+ Year Experience</li>
 <li>Dedicated</li>
@@ -127,7 +127,7 @@ Join ZTailor Craft as an affiliate tailor and grow your customer base.
 
 <div style="width:300px;background:#1a1a1a;padding:25px;border-radius:12px">
 <h3 style="color:#ff6147">What You Get</h3>
-<ul style="text-align:left;line-height:1.8">
+<ul style="text-align:center;line-height:1.8;list-style:none">
 <li>Verified Badge</li>
 <li>Guaranteed Orders</li>
 <li>Delivery Support</li>
@@ -138,7 +138,6 @@ Join ZTailor Craft as an affiliate tailor and grow your customer base.
 </section>
 
 <footer>
-<p>© 2025 ZTailor Craft</p>
 <div class="socials">
 <a href="https://facebook.com" target="_blank"><i class="fab fa-facebook"></i></a>
 <a href="https://youtube.com" target="_blank"><i class="fab fa-youtube"></i></a>
@@ -147,6 +146,7 @@ Join ZTailor Craft as an affiliate tailor and grow your customer base.
 </a>
 
 </div>
+<p>© 2025 ZTailor Craft</p>
 </footer>
 
 <a href="https://wa.me/923049289203" class="whatsapp-float" target="_blank">
