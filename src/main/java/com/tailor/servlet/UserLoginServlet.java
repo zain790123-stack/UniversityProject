@@ -45,7 +45,6 @@ public class UserLoginServlet extends HttpServlet {
             session.setAttribute("userType", "user");
             session.setAttribute("username", username);
 
-            //  SAFE redirect
             res.sendRedirect(req.getContextPath() + "/loginIndex.jsp");
         } else {
             req.getSession().setAttribute("error", "Invalid credentials");
