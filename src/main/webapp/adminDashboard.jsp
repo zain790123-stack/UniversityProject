@@ -1,66 +1,66 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*, java.util.*, java.text.SimpleDateFormat" %>
 
-<%
-String adminName = (String) session.getAttribute("adminName");
-String adminEmail = (String) session.getAttribute("adminEmail");
-Integer adminIdInt = (Integer) session.getAttribute("adminId");
-String adminId = adminIdInt != null ? adminIdInt.toString() : "";
+ <%
+   String adminName = (String) session.getAttribute("adminName");
+   String adminEmail = (String) session.getAttribute("adminEmail");
+   Integer adminIdInt = (Integer) session.getAttribute("adminId");
+   String adminId = adminIdInt != null ? adminIdInt.toString() : "";
 
-if (adminName == null || adminEmail == null) {
-    response.sendRedirect("unifiedLogin.jsp");
-    return;
-}
-
-Connection conTailor = null;
-Connection conShop = null;
-PreparedStatement ps = null;
-ResultSet rs = null;
-
-List<Map<String, Object>> suitRequests = new ArrayList<>();
-List<Map<String, Object>> alterationRequests = new ArrayList<>();
-List<Map<String, Object>> tailors = new ArrayList<>();
-List<Map<String, Object>> orders = new ArrayList<>();
-List<Map<String, Object>> users = new ArrayList<>();
-List<Map<String, Object>> reviews = new ArrayList<>();
-
-int suitCount = 0, alterationCount = 0, tailorsCount = 0, ordersCount = 0, usersCount = 0, reviewsCount = 0;
-
-try {
-    Class.forName("com.mysql.cj.jdbc.Driver");
-    conTailor = DriverManager.getConnection("jdbc:mysql://localhost:3306/tailor_db", "root", "12345");
-    conShop = DriverManager.getConnection("jdbc:mysql://localhost:3306/tailor_shop", "root", "12345");
-    
-    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-    SimpleDateFormat shortFormat = new SimpleDateFormat("yyyy-MM-dd");
-    
-    String sql = "SELECT * FROM suit_requests ORDER BY created_at DESC";
-    ps = conTailor.prepareStatement(sql);
-    rs = ps.executeQuery();
-    while(rs.next()) {
-        Map<String, Object> row = new HashMap<>();
-        row.put("id", rs.getInt("id"));
-        row.put("request_id", rs.getString("request_id"));
-        row.put("garment", rs.getString("garment"));
-        row.put("slai", rs.getString("slai"));
-        row.put("deadline", rs.getDate("deadline"));
-        row.put("customer_name", rs.getString("customer_name"));
-        row.put("customer_phone", rs.getString("customer_phone"));
-        row.put("customer_whatsapp", rs.getString("customer_whatsapp"));
-        row.put("customer_address", rs.getString("customer_address"));
-        row.put("tailor_name", rs.getString("tailor_name"));
-        row.put("cloth_image", rs.getString("cloth_image"));
-        row.put("client_image", rs.getString("client_image"));
-        row.put("measurements", rs.getString("measurements"));
-        row.put("additional_notes", rs.getString("additional_notes"));
-        row.put("status", rs.getString("status") != null ? rs.getString("status") : "pending");
-        row.put("created_at", rs.getTimestamp("created_at"));
-        row.put("approval_date", rs.getTimestamp("approval_date"));
-        suitRequests.add(row);
+   if (adminName == null || adminEmail == null) {
+      response.sendRedirect("unifiedLogin.jsp");
+     return;
     }
-    suitCount = suitRequests.size();
-    rs.close();
-    ps.close();
+
+    Connection conTailor = null;
+    Connection conShop = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+
+     List<Map<String, Object>> suitRequests = new ArrayList<>();
+     List<Map<String, Object>> alterationRequests = new ArrayList<>();
+     List<Map<String, Object>> tailors = new ArrayList<>();
+     List<Map<String, Object>> orders = new ArrayList<>();
+     List<Map<String, Object>> users = new ArrayList<>();
+     List<Map<String, Object>> reviews = new ArrayList<>();
+
+    int suitCount = 0, alterationCount = 0, tailorsCount = 0, ordersCount = 0, usersCount = 0, reviewsCount = 0;
+
+    try {
+       Class.forName("com.mysql.cj.jdbc.Driver");
+       conTailor = DriverManager.getConnection("jdbc:mysql://localhost:3306/tailor_db", "root", "12345");
+       conShop = DriverManager.getConnection("jdbc:mysql://localhost:3306/tailor_shop", "root", "12345");
+    
+       SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+       SimpleDateFormat shortFormat = new SimpleDateFormat("yyyy-MM-dd");
+    
+       String sql = "SELECT * FROM suit_requests ORDER BY created_at DESC";
+       ps = conTailor.prepareStatement(sql);
+       rs = ps.executeQuery();
+        while(rs.next()) {
+          Map<String, Object> row = new HashMap<>();
+            row.put("id", rs.getInt("id"));
+            row.put("request_id", rs.getString("request_id"));
+            row.put("garment", rs.getString("garment"));
+            row.put("slai", rs.getString("slai"));
+            row.put("deadline", rs.getDate("deadline"));
+            row.put("customer_name", rs.getString("customer_name"));
+            row.put("customer_phone", rs.getString("customer_phone"));
+            row.put("customer_whatsapp", rs.getString("customer_whatsapp"));
+            row.put("customer_address", rs.getString("customer_address"));
+            row.put("tailor_name", rs.getString("tailor_name"));
+            row.put("cloth_image", rs.getString("cloth_image"));
+            row.put("client_image", rs.getString("client_image"));
+            row.put("measurements", rs.getString("measurements"));
+            row.put("additional_notes", rs.getString("additional_notes"));
+            row.put("status", rs.getString("status") != null ? rs.getString("status") : "pending");
+            row.put("created_at", rs.getTimestamp("created_at"));
+            row.put("approval_date", rs.getTimestamp("approval_date"));
+          suitRequests.add(row);
+          }
+       suitCount = suitRequests.size();
+     rs.close();
+     ps.close();
     
     sql = "SELECT * FROM alteration_requests ORDER BY created_at DESC";
     ps = conTailor.prepareStatement(sql);
@@ -1571,8 +1571,8 @@ finally {
                 
                 <div style="margin-bottom: 20px;">
                     <label style="display:block; margin-bottom:5px; color:var(--primary);">Admin Key:</label>
-                    <input type="text" id="adminKey"
-                           placeholder="Leave blank to keep current admin key"
+                    <input type="text" id="adminKey" inputmode="numeric" pattern="[0-9]{5}"
+                           placeholder="Enter 5-digit admin key" maxlength="5"
                            style="width:100%; padding:10px; border-radius:5px; border:1px solid var(--primary); background:var(--darker); color:var(--light);">
                 </div>
                 
@@ -2600,13 +2600,13 @@ async function saveUserChanges(event) {
     }
 }
 
-async function testAction(buttonElement) {
+     async function testAction(buttonElement) {
 
-    if (buttonElement) {
-        buttonElement.disabled = true;
-        const originalHTML = buttonElement.innerHTML;
-        buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Testing...';
-    }
+        if (buttonElement) {
+            buttonElement.disabled = true;
+            const originalHTML = buttonElement.innerHTML;
+            buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Testing...';
+         }
     
     showLoading();
     
@@ -2748,9 +2748,25 @@ function openAdminEditModal() {
     document.getElementById('adminEditModal').style.display = 'flex';
 }
 
+const adminKeyEl = document.getElementById("adminKey");
+
+adminKeyEl.addEventListener("input", () => {
+
+    adminKeyEl.value = adminKeyEl.value.replace(/\D/g, "");
+
+    if (adminKeyEl.value.length > 5) {
+        adminKeyEl.value = adminKeyEl.value.slice(0, 5);
+    }
+});
+
 async function updateAdminProfile(event) {
     event.preventDefault();
-    
+    const adminKey = document.getElementById('adminKey').value.trim();
+
+    if (adminKey !== "" && !/^\d{5}$/.test(adminKey)) {
+        showNotification("Admin key must be exactly 5 digits (numbers only)", "error");
+        return;
+    }
     const submitButton = event.target.querySelector('button[type="submit"]');
     const originalHTML = submitButton.innerHTML;
     submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
@@ -2763,8 +2779,7 @@ async function updateAdminProfile(event) {
         params.append('action', 'updateAdmin');
         params.append('id', document.getElementById('adminId').value);
         params.append('name', document.getElementById('adminName').value);
-        params.append('adminKey', document.getElementById('adminKey').value);       
-        
+        params.append('adminKey', adminKey);        
         const response = await fetch('AdminManagementServlet', {
             method: 'POST',
             headers: {
