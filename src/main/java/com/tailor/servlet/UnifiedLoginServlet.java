@@ -4,7 +4,6 @@ import java.io.IOException;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,27 +17,11 @@ public class UnifiedLoginServlet extends HttpServlet {
             throws IOException, ServletException {
 
         String role = req.getParameter("role");
-        String email = req.getParameter("email");
-        String rememberMe = req.getParameter("rememberMe"); 
 
         if (role == null || role.isEmpty()) {
             req.getSession().setAttribute("error", "Please select a role");
             res.sendRedirect("unifiedLogin.jsp");
             return;
-        }
-
-        if (rememberMe != null) {
-        
-            Cookie c = new Cookie("rememberEmail", email);
-            c.setMaxAge(7 * 24 * 60 * 60); 
-            c.setPath(req.getContextPath());
-            res.addCookie(c);
-        } else {
-            
-            Cookie c = new Cookie("rememberEmail", "");
-            c.setMaxAge(0);
-            c.setPath(req.getContextPath());
-            res.addCookie(c);
         }
 
         String targetServlet;
