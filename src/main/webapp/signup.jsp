@@ -8,9 +8,6 @@
 <title>Sign Up</title>
 
 <style>
-/* ------------------------------------
-   GLOBAL DARK THEME + ANIMATIONS
-------------------------------------- */
 * {
     margin: 0; padding: 0;
     box-sizing: border-box;
@@ -66,9 +63,6 @@ h2 {
     letter-spacing: 1px;
 }
 
-/* ---------------------------
-   INPUT FIELDS
---------------------------- */
 .input-group {
     margin-bottom: 18px;
 }
@@ -96,9 +90,6 @@ label {
     outline: none;
 }
 
-/* ---------------------------
-   VALIDATION MESSAGES
---------------------------- */
 .validation-msg {
     font-size: 12px;
     margin-top: 4px;
@@ -108,9 +99,6 @@ label {
 .success { color: #00ff9d; }
 .error { color: #ff4f4f; }
 
-/* ---------------------------
-   SIGNUP BUTTON
---------------------------- */
 .btn-signup {
     width: 100%;
     margin-top: 10px;
@@ -130,9 +118,6 @@ label {
     box-shadow: 0 0 15px #00eaff;
 }
 
-/* ---------------------------
-   LINKS
---------------------------- */
 .redirect {
     color: #ddd;
     margin-top: 15px;
@@ -141,9 +126,6 @@ label {
 
 .redirect a { color: #00c3ff; }
 
-/* ---------------------------
-   MESSAGE FADE OUT
---------------------------- */
 @keyframes fadeOut {
     from { opacity: 1; }
     to { opacity: 0; }
@@ -162,24 +144,21 @@ label {
 
 <form id="signupForm" action="SignUpServlet" method="POST">
 
-    <!-- USERNAME -->
     <div class="input-group">
         <label>Username</label>
         <input type="text" id="username" name="username" maxlength="12" required>
         <p id="usernameMsg" class="validation-msg"></p>
     </div>
 
-    <!-- EMAIL -->
     <div class="input-group">
         <label>Email</label>
-        <input type="email" id="email" name="email" required>
+        <input type="email" id="email" name="email" required maxlength="40">
         <p id="emailMsg" class="validation-msg"></p>
     </div>
 
-    <!-- PASSWORD -->
     <div class="input-group">
         <label>Password</label>
-        <input type="password" id="password" name="password" required>
+        <input type="password" id="password" name="password" required maxlength="20">
         <p id="passMsg" class="validation-msg"></p>
     </div>
 
@@ -190,7 +169,6 @@ label {
 <p class="redirect">Already have an account? <a href="unifiedLogin.jsp">Login</a></p>
 <p class="redirect">Back to home? <a href="index.jsp">Home</a></p>
 
-<%-- Server-side message display --%>
 <%
 String message = (String) request.getAttribute("message");
 String type = (String) request.getAttribute("messageType");
@@ -202,7 +180,6 @@ if (message != null && type != null) {
 </div>
 
 <script>
-// ------------------ DEBOUNCE HELPER ------------------
 function debounce(fn, delay){
   let t;
   return function(...args){
@@ -211,15 +188,14 @@ function debounce(fn, delay){
   };
 }
 
-// ------------------ USERNAME LIVE VALIDATION ------------------
 const usernameEl = document.getElementById("username");
 const usernameMsg = document.getElementById("usernameMsg");
 
 const checkUsername = debounce(() => {
     let u = usernameEl.value.trim();
-    const usernamePattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,12}$/;
+    const usernamePattern = /^(?=.*[a-z])(?=.*\d)[a-z\d]{6,12}$/;
     if (!usernamePattern.test(u)) {
-        usernameMsg.textContent = "4-12 chars, must include letters & numbers";
+        usernameMsg.textContent = "6-12 chars, must include small letters & numbers";
         usernameMsg.className = "validation-msg error";
         return;
     }
@@ -246,26 +222,67 @@ const checkUsername = debounce(() => {
 
 usernameEl.addEventListener("input", checkUsername);
 
-// ------------------ EMAIL LIVE VALIDATION ------------------
 const emailEl = document.getElementById("email");
 const emailMsg = document.getElementById("emailMsg");
 
 const checkEmail = debounce(() => {
     let e = emailEl.value.trim();
-    const emailPattern = /^(?=[A-Za-z0-9]*[A-Za-z])(?=[A-Za-z0-9]*\d)[A-Za-z0-9]+@[A-Za-z0-9]+\.[A-Za-z]{2,}$/;
-    if (!emailPattern.test(e)) {
-        emailMsg.textContent = "Email must include letters & numbers, no special chars";
+
+    if (!e.endsWith("@gmail.com")) {
+        emailMsg.textContent = "Domain must be @gmail.com only";
         emailMsg.className = "validation-msg error";
         return;
     }
-    fetch("ValidateEmailServlet?email=" + encodeURIComponent(e), {cache: 'no-store'})
+
+    const local = e.split("@")[0] || "";
+
+    if (!/^[a-z0-9]*$/.test(local)) {
+        emailMsg.textContent = "No special characters or Capital letters allowed before @";
+        emailMsg.className = "validation-msg error";
+        return;
+    }
+
+    if (local.length < 6 || local.length > 30) {
+        emailMsg.textContent = "Length must be 6–30 characters before @";
+        emailMsg.className = "validation-msg error";
+        return;
+    }
+
+    const letters = (local.match(/[a-z]/g) || []).length;
+    const digits = (local.match(/\d/g) || []).length;
+
+    if (digits > 8) {
+        emailMsg.textContent = "Maximum 8 digits allowed";
+        emailMsg.className = "validation-msg error";
+        return;
+    }
+
+    if (digits < 3) {
+        emailMsg.textContent = "At least 3 digits required";
+        emailMsg.className = "validation-msg error";
+        return;
+    }
+
+    if (letters > 22) {
+        emailMsg.textContent = "Maximum 22 letters allowed";
+        emailMsg.className = "validation-msg error";
+        return;
+    }
+
+    if (letters < 4) {
+        emailMsg.textContent = "At least 4 letters required";
+        emailMsg.className = "validation-msg error";
+        return;
+    }
+
+    fetch("ValidateEmailServlet?email=" + encodeURIComponent(e), { cache: 'no-store' })
         .then(r => r.text())
         .then(t => {
             t = t.trim();
-            if(t === "exists") {
+            if (t === "exists") {
                 emailMsg.textContent = "Email already registered ❌";
                 emailMsg.className = "validation-msg error";
-            } else if(t === "ok") {
+            } else if (t === "ok") {
                 emailMsg.textContent = "Email available ✔";
                 emailMsg.className = "validation-msg success";
             } else {
@@ -277,11 +294,10 @@ const checkEmail = debounce(() => {
             emailMsg.textContent = "Server error";
             emailMsg.className = "validation-msg error";
         });
-}, 400);
 
+}, 400);
 emailEl.addEventListener("input", checkEmail);
 
-// ------------------ PASSWORD LIVE VALIDATION ------------------
 const passwordEl = document.getElementById("password");
 const passMsg = document.getElementById("passMsg");
 
@@ -301,13 +317,12 @@ passwordEl.addEventListener("input", () => {
     }
 });
 
-// ------------------ AUTO FADE-OUT SERVER MESSAGE ------------------
 window.addEventListener("DOMContentLoaded", () => {
     const msgEl = document.getElementById("formMessage");
     if(msgEl) {
         setTimeout(() => {
             msgEl.classList.add("fade-out");
-        }, 4000); // 4 seconds
+        }, 4000); 
     }
 });
 </script>
