@@ -2,16 +2,6 @@
 <%
 String error = (String) session.getAttribute("error");
 session.removeAttribute("error");
-
-String rememberedEmail = "";
-Cookie[] cookies = request.getCookies();
-if (cookies != null) {
-    for (Cookie c : cookies) {
-        if ("rememberEmail".equals(c.getName())) {
-            rememberedEmail = c.getValue();
-        }
-    }
-}
 %>
 
 <!DOCTYPE html>
@@ -43,7 +33,7 @@ if (cookies != null) {
 
         <div class="input-group">
             <label>Email</label>
-            <input type="email" name="email" value="<%= rememberedEmail %>" required>
+            <input type="email" name="email" id="email" required>
         </div>
 
         <div class="input-group password-box">
@@ -58,13 +48,6 @@ if (cookies != null) {
             <label>Admin Key</label>
             <input type="text" name="adminKey" id="adminKey">
         </div>
-        <div class="input-group remember-me">
-        <label>
-            <input type="checkbox" name="rememberMe"
-            <%= rememberedEmail.isEmpty() ? "" : "checked" %>>
-            Remember Me
-        </label>
-    </div>
 
         <button type="submit" class="btn-login">Login</button>
 
