@@ -1106,7 +1106,7 @@ try {
                         <th>ID</th>
                         <th>Username</th>
                         <th>Email</th>
-                        <th>Password Hash</th>
+                        <th>Password</th>
                         <th>Created At</th>
                     </tr>
                 </thead>
