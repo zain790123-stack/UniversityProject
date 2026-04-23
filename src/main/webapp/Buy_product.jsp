@@ -203,6 +203,34 @@ padding-bottom:10px;
 
 <main class="products-container">
     <div class="product-card">
+        <img src="images/cotton.webp" alt="cloth1">
+        <h3>Premium Cotton Fabric</h3>
+        <p class="price">Rs 5000.00</p>
+        <p>Best fabric quality.</p>
+        <a class="btn" href="popupForm.jsp?product=Premium Cotton Fabric&price=5000">Add to Cart</a>
+    </div>
+    <div class="product-card">
+        <img src="images/brown.webp" alt="cloth2">
+        <h3>Cotton Fabric variety 2</h3>
+        <p class="price">Rs 3000.00</p>
+        <p>Best fabric quality.</p>
+        <a class="btn" href="popupForm.jsp?product=Cotton Fabric variety 2&price=3000">Add to Cart</a>
+    </div>
+    <div class="product-card">
+        <img src="images/gulf.webp" alt="cloth3">
+        <h3>Cotton Fabric variety 3</h3>
+        <p class="price">Rs 4000.00</p>
+        <p>Best fabric quality.</p>
+        <a class="btn" href="popupForm.jsp?product=Cotton Fabric variety 3&price=4000">Add to Cart</a>
+    </div>
+    <div class="product-card">
+        <img src="images/cloth2.jpg" alt="cloth3">
+        <h3>Cotton Fabric variety 4</h3>
+        <p class="price">Rs 6000.00</p>
+        <p>Best fabric quality.</p>
+        <a class="btn" href="popupForm.jsp?product=Cotton Fabric variety 4&price=6000">Add to Cart</a>
+    </div>
+    <div class="product-card">
         <img src="images/Blazer.webp" alt="Elegant Pent Shirt">
         <h3>Elegant Blazer</h3>
         <p class="price">Rs 2500.00</p>
@@ -249,6 +277,7 @@ padding-bottom:10px;
         <p>Ideal for sewing thick fabrics like denim.</p>
         <a class="btn" href="popupForm.jsp?product=Singer Sewing Machine&price=12000">Add to Cart</a>
     </div>
+    
 </main>
 
 <footer class="footer">
