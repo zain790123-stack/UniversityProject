@@ -80,11 +80,10 @@ body::before {
     border-color:#00eaff;
 }
 
-/* FIXED IMAGE SIZE */
 .product-card img {
     width:100%;
-    height:250px;        /* fixed height */
-    object-fit:cover;     /* maintain aspect ratio, crop if necessary */
+    height:250px;        
+    object-fit:cover;    
     border-bottom:1px solid rgba(255,255,255,0.2);
 }
 

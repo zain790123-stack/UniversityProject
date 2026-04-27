@@ -61,6 +61,8 @@ public class AdminPasswordChange extends HttpServlet {
             int updated = updatePs.executeUpdate();
             if (updated > 0) {
                 session.setAttribute("successMsg", "Password changed successfully!");
+                resp.sendRedirect("unifiedLogin.jsp");
+                return;
             } else {
                 session.setAttribute("errorMsg", "Admin account not found!");
             }
