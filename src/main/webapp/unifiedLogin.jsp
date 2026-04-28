@@ -3,7 +3,10 @@
 String error = (String) session.getAttribute("error");
 session.removeAttribute("error");
 %>
-
+<%
+String success = (String) session.getAttribute("tailorSuccessMsg");
+session.removeAttribute("tailorSuccessMsg");
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -203,6 +206,15 @@ opacity:0
 <body>
 
 <div class="form-box">
+
+<% if (success != null) { %>
+<div id="successBox" style="color:lightgreen;"><%= success %></div>
+<script>
+        setTimeout(() => {
+            document.getElementById("successBox").style.display = "none";
+        }, 5000);
+    </script>
+<% } %>
     <h2>Login</h2>
 
     <form id="loginForm" method="post" action="UnifiedLoginServlet">
