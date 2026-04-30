@@ -373,6 +373,7 @@ body {
 
 .edit-profile-btn {
     background: #2563eb;
+    margin-top:10px;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -657,6 +658,32 @@ tr:hover {
     color: #60a5fa;
     font-size: 18px;
 }
+.price-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.price-item {
+    background: rgba(30, 41, 59, 0.6);
+    padding: 10px 12px;
+    border-radius: 6px;
+    border-left: 3px solid #2563eb;
+    min-width: 120px;
+}
+
+.price-item strong {
+    display: block;
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.price-item span {
+    font-size: 14px;
+    color: #e5e7eb;
+    font-weight: bold;
+}
 
 .close-modal {
     background: none;
@@ -843,10 +870,41 @@ tr:hover {
                     <span><%= tailor.getDate("created_at") %></span>
                 </div>
             </div>
-            
             <button class="edit-profile-btn" onclick="location.href='tailorAccount.jsp'">
                 <i class="fas fa-edit"></i> Edit Profile
             </button>
+            
+        <div class="price-row">
+
+    <div class="price-item">
+        <strong>Suit Single slai</strong>
+        <span>Rs. <%= tailor.getDouble("suit_single_price") %></span>
+    </div>
+
+    <div class="price-item">
+        <strong>Suit Double slai</strong>
+        <span>Rs. <%= tailor.getDouble("suit_double_price") %></span>
+    </div>
+
+    <div class="price-item">
+        <strong>Urgent charges</strong>
+        <span>Rs. <%= tailor.getDouble("suit_urgent_price") %></span>
+    </div>
+
+    <div class="price-item">
+        <strong>Alteration Basic price</strong>
+        <span>Rs. <%= tailor.getDouble("alteration_basic_price") %></span>
+    </div>
+
+    <div class="price-item">
+        <strong>Alteration Urgent charges</strong>
+        <span>Rs. <%= tailor.getDouble("alteration_urgent_price") %></span>
+    </div>
+
+</div><button class="edit-profile-btn" onclick="openPriceModal()">
+    <i class="fas fa-rupee-sign"></i> Edit Prices
+</button>
+            
         </div>
     </div>
 
@@ -1455,9 +1513,51 @@ tr:hover {
     </div>
 </div>
 
+<div id="priceModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Edit Prices (Rs)</h3>
+            <button class="close-modal" onclick="closeModal('priceModal')">&times;</button>
+        </div>
+
+        <form method="post" action="UpdatePriceServlet">
+            <input type="hidden" name="tailorName" value="<%= tailorName %>">
+
+            <div class="modal-body">
+
+                <label>Suit Single Price</label>
+                <input type="number" step="0.01" name="suit_single_price"
+                       value="<%= tailor.getDouble("suit_single_price") %>">
+
+                <label>Suit Double Price</label>
+                <input type="number" step="0.01" name="suit_double_price"
+                       value="<%= tailor.getDouble("suit_double_price") %>">
+
+                <label>Suit Urgent Price</label>
+                <input type="number" step="0.01" name="suit_urgent_price"
+                       value="<%= tailor.getDouble("suit_urgent_price") %>">
+
+                <label>Alteration Basic Price</label>
+                <input type="number" step="0.01" name="alteration_basic_price"
+                       value="<%= tailor.getDouble("alteration_basic_price") %>">
+
+                <label>Alteration Urgent Price</label>
+                <input type="number" step="0.01" name="alteration_urgent_price"
+                       value="<%= tailor.getDouble("alteration_urgent_price") %>">
+
+                <br><br>
+                <button type="submit" class="edit-profile-btn">Save Prices</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
 
 document.getElementById('loading').style.display = 'none';
+function openPriceModal() {
+    document.getElementById('priceModal').style.display = 'flex';
+}
 
 function showSection(sectionId) {
     

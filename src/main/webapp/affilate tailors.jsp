@@ -122,6 +122,22 @@ color:#000;
 <label>Experience (0-99):</label>
 <input type="number" name="experience" id="experience" min="0" max="99" required>
 <p id="expMsg" class="validation-msg"></p>
+<h3 style="color:#00ff8c;margin-top:20px;">Set Your Prices</h3>
+
+<label>Single Suit Price:</label>
+<input type="number" name="suitSingle" required>
+
+<label>Double Suit Price:</label>
+<input type="number" name="suitDouble" required>
+
+<label>Urgent Charges (Suit):</label>
+<input type="number" name="suitUrgent" required>
+
+<label>Alteration Price:</label>
+<input type="number" name="alterationBasic" required>
+
+<label>Urgent Charges (Alteration):</label>
+<input type="number" name="alterationUrgent" required>
 
 <label>Username:</label>
 <input type="text" name="username" id="username" maxlength="12" required>

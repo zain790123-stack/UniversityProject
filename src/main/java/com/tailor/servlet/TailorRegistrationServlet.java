@@ -92,6 +92,11 @@ public class TailorRegistrationServlet extends HttpServlet {
         String username = request.getParameter("username");
         String email = request.getParameter("email");
         String password = request.getParameter("password");
+        double suitSingle = Double.parseDouble(request.getParameter("suitSingle"));
+        double suitDouble = Double.parseDouble(request.getParameter("suitDouble"));
+        double suitUrgent = Double.parseDouble(request.getParameter("suitUrgent"));
+        double alterationBasic = Double.parseDouble(request.getParameter("alterationBasic"));
+        double alterationUrgent = Double.parseDouble(request.getParameter("alterationUrgent"));
 
         String uploadDir = "C:\\Users\\Zain Ul Abidin\\eclipse-workspace\\ZTailor\\src\\main\\webapp\\uploads\\TailorPictures"; 
         File uploadFolder = new File(uploadDir);
@@ -127,20 +132,30 @@ public class TailorRegistrationServlet extends HttpServlet {
                 return;
             }
 
-            String sql = "INSERT INTO Tailors (name,phone,address,picture_path,specialty,experience,username,email,password,verified,created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+            String sql = "INSERT INTO Tailors (name,phone,address,picture_path,specialty,experience,username,email,password,verified,created_at,suit_single_price,suit_double_price,suit_urgent_price,alteration_basic_price,alteration_urgent_price) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            try(PreparedStatement ps = conn.prepareStatement(sql)){
                 ps.setString(1, name);
                 ps.setString(2, phone);
                 ps.setString(3, address);
-                ps.setString(4, clothImage); 
+                ps.setString(4, clothImage);
                 ps.setString(5, specialty);
                 ps.setInt(6, experience);
                 ps.setString(7, username);
                 ps.setString(8, email);
                 ps.setString(9, hashedPassword);
-                ps.setBoolean(10, true);
-                ps.setTimestamp(11, new Timestamp(System.currentTimeMillis())); // For example, created_at
+
+                ps.setBoolean(10, true); // verified
+
+                ps.setTimestamp(11, new Timestamp(System.currentTimeMillis()));
+
+                ps.setDouble(12, suitSingle);
+                ps.setDouble(13, suitDouble);
+                ps.setDouble(14, suitUrgent);
+
+                ps.setDouble(15, alterationBasic);     // ✅ FIXED (was missing)
+                ps.setDouble(16, alterationUrgent);
+
                 ps.executeUpdate();
             }
 

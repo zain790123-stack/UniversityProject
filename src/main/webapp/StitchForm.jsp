@@ -1,28 +1,36 @@
-<%@page import="java.util.Iterator"%>
-<%@ page import="java.util.List" language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="java.util.*" %>
 <%@ page import="java.sql.*" %>
+
 <%
-List<String> tailors = new java.util.ArrayList<>();
+List<Map<String,String>> tailors = new ArrayList<>();
 
 try {
     Class.forName("com.mysql.cj.jdbc.Driver");
     Connection conn = DriverManager.getConnection(
-        "jdbc:mysql://localhost:3306/tailor_db", "root", "12345");
+        "jdbc:mysql://localhost:3306/tailor_db?useUnicode=true&characterEncoding=UTF-8", "root", "12345");
 
-    String sql = "SELECT name FROM tailors WHERE status = ?";
+    String sql = "SELECT id, name FROM tailors WHERE status = ?";
     PreparedStatement ps = conn.prepareStatement(sql);
     ps.setString(1, "approved");
 
     ResultSet rs = ps.executeQuery();
+
     while(rs.next()){
-        tailors.add(rs.getString("name"));
+        Map<String,String> t = new HashMap<>();
+        t.put("id", rs.getString("id"));
+        t.put("name", rs.getString("name"));
+        tailors.add(t);
     }
+
+    rs.close();
+    ps.close();
     conn.close();
 
-} catch(Exception e){
+  } catch(Exception e){
     e.printStackTrace();
-}
-%>
+  }
+ %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -279,51 +287,53 @@ input[type="submit"]:hover{
     </select>
 
     <label>Select Tailor</label>
-    <select name="tailor" required>
+    <select name="tailor" id="tailorSelect" required onchange="loadTailorPrices()">
     <option value="">-- Please choose --</option>
-    <% for(String t : tailors){ %>
-        <option value="<%=t%>"><%=t%></option>
-    <% } %>
+     <% for(Map<String,String> t : tailors){ %>
+        <option value="<%=t.get("name")%>">  <!-- Send NAME instead of ID -->
+            <%=t.get("name")%>
+        </option>
+     <% } %>
     </select>
-
-    <label>Slai</label>
+    <input type="hidden" id="tailor-name-hidden" name="tailor-name">
+    
     <select id="slai" name="slai" required onchange="calculatePrice()">
         <option value="">-- Please choose --</option>
-        <option value="single">Single 1000</option>
-        <option value="double">Double 1500</option>
     </select>
 
     <label>Deadline</label>
     <div class="date-picker-wrapper" onclick="openDatePicker()">
-        <input type="date" id="date" name="date" required  onchange="validateDate(); calculatePrice();">
+        <input type="date" id="date" name="date" required onchange="validateDate(); calculatePrice();">
     </div>
 
     <div id="price-display" class="price-display">Estimated Price: Rs 0</div>
+    <input type="hidden" name="price" id="price-input">
 
     <label>Upload Cloth Picture</label>
     <input type="file" name="face-picture" accept="image/*" required>
     
     <label>Upload Client Picture</label>
     <input type="file" name="client-picture" accept="image/*">
+    
     <label>
-    <input type="checkbox" id="hasMeasurements" name="hasMeasurements" value="yes" onchange="toggleMeasurements()">
-    I want to enter measurements
+        <input type="checkbox" id="hasMeasurements" name="hasMeasurements" value="yes" onchange="toggleMeasurements()">
+        I want to enter measurements
     </label>
+    
     <div id="measurementsBox" style="display:none; margin-top:15px;">
-    <label>Measurements</label>
-
-    <input type="text" name="teera" class="measure" placeholder="Teera">
-    <input type="text" name="ghera" class="measure" placeholder="Ghera">
-    <input type="text" name="hip" class="measure" placeholder="Hip">
-    <input type="text" name="chest" class="measure" placeholder="Chest">
-    <input type="text" name="belly" class="measure" placeholder="Belly">
-    <input type="text" name="shalwar" class="measure" placeholder="Shalwar Length">
-    <input type="text" name="kameez" class="measure" placeholder="Kameez Length">
-    <input type="text" name="shoulder" class="measure" placeholder="Shoulder">
-    <input type="text" name="sleeve" class="measure" placeholder="Sleeve">
-    <input type="text" name="cuff" class="measure" placeholder="Cuff">
-    <input type="text" name="neck" class="measure" placeholder="Neck">
-    <input type="text" name="pancha" class="measure" placeholder="Pancha">
+        <label>Measurements</label>
+        <input type="text" name="teera" class="measure" placeholder="Teera">
+        <input type="text" name="ghera" class="measure" placeholder="Ghera">
+        <input type="text" name="hip" class="measure" placeholder="Hip">
+        <input type="text" name="chest" class="measure" placeholder="Chest">
+        <input type="text" name="belly" class="measure" placeholder="Belly">
+        <input type="text" name="shalwar" class="measure" placeholder="Shalwar Length">
+        <input type="text" name="kameez" class="measure" placeholder="Kameez Length">
+        <input type="text" name="shoulder" class="measure" placeholder="Shoulder">
+        <input type="text" name="sleeve" class="measure" placeholder="Sleeve">
+        <input type="text" name="cuff" class="measure" placeholder="Cuff">
+        <input type="text" name="neck" class="measure" placeholder="Neck">
+        <input type="text" name="pancha" class="measure" placeholder="Pancha">
     </div>
     
     <label>Your Name</label>
@@ -345,57 +355,103 @@ input[type="submit"]:hover{
     <textarea name="notes" rows="4" placeholder="Write measurement details or instructions"></textarea>
 
     <input type="submit" value="Submit Request">
-    </form>
+</form>
 
-    <%
-    String success = (String) session.getAttribute("success");
-    String errorMsg = (String) session.getAttribute("error");
-    session.removeAttribute("success");
-    session.removeAttribute("error");
-    %>
+   <%
+     String success = (String) session.getAttribute("success");
+     String errorMsg = (String) session.getAttribute("error");
+     session.removeAttribute("success");
+     session.removeAttribute("error");
+   %>
 
-    <% if (success != null) { %>
-    <p style="color:#00ff9d; background:rgba(0,255,150,0.15); border:1px solid rgba(0,255,150,0.3); padding:10px; border-radius:10px; font-weight:bold; text-align:center; margin-top:15px;"><%= success %></p>
-    <% } %>
+   <% if (success != null) { %>
+      <p style="color:#00ff9d; background:rgba(0,255,150,0.15); border:1px solid rgba(0,255,150,0.3); padding:10px; border-radius:10px; font-weight:bold; text-align:center; margin-top:15px;">
+      <%= success %></p>
+   <% } %>
 
-    <% if (errorMsg != null) { %>
-    <p style="color:#ff4f4f; background:rgba(255,80,80,0.15); border:1px solid rgba(255,80,80,0.3); padding:10px; border-radius:10px; font-weight:bold; text-align:center; margin-top:15px;"><%= errorMsg %></p>
-    <% } %>
+   <% if (errorMsg != null) { %>
+       <p style="color:#ff4f4f; background:rgba(255,80,80,0.15); border:1px solid rgba(255,80,80,0.3); padding:10px; border-radius:10px; font-weight:bold; text-align:center; margin-top:15px;">
+       <%= errorMsg %></p>
+   <% } %>
 
-    <p class="redirect">Back to home? <a href="loginIndex.jsp">Back</a></p>
-    </div>
+ <p class="redirect">Back to home? <a href="loginIndex.jsp">Back</a></p>
+ </div>
 
-   <script>
-    function calculatePrice(){
+<script>
+let tailorPrices = {
+    singlePrice: 0,
+    doublePrice: 0,
+    urgentPrice: 0
+};
+
+function loadTailorPrices(){
+    const tailor = document.getElementById("tailorSelect").value;
+
+    if(!tailor) return;
+
+    fetch("GetTailorPriceServlet?tailor=" + tailor)
+    .then(res => res.json())
+    .then(data => {
+        console.log(data); 
+
+        tailorPrices.singlePrice = Number(data.singlePrice);
+        tailorPrices.doublePrice = Number(data.doublePrice);
+        tailorPrices.urgentPrice = Number(data.urgentPrice);
+
+        loadSlaiOptions();
+        calculatePrice();
+    })
+    .catch(error => {
+        console.error("Error loading tailor prices:", error);
+    });
+}
+
+function loadSlaiOptions(){
+    const slai = document.getElementById("slai");
+    
+    slai.innerHTML = `
+        <option value="">-- Please choose --</option>
+        <option value="single">Single (${tailorPrices.singlePrice})</option>
+        <option value="double">Double (${tailorPrices.doublePrice})</option>
+    `;
+}
+
+function calculatePrice(){
     const slai = document.getElementById("slai").value;
     const dateInput = document.getElementById("date").value;
-    const priceDisplay = document.getElementById("price-display");
 
     let base = 0;
-    if(slai === "single") base = 1000;
-    if(slai === "double") base = 2000;
+
+    if(slai === "single") base = tailorPrices.singlePrice;
+    if(slai === "double") base = tailorPrices.doublePrice;
 
     if(dateInput){
         const today = new Date();
         const deadline = new Date(dateInput);
+
         const diff = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));
 
-        if(diff < 7) base += 500;
+        if(diff < 7){
+            base += tailorPrices.urgentPrice;
+        }
     }
 
-    priceDisplay.textContent = "Estimated Price: Rs " + base;
-   }
+    document.getElementById("price-display").innerText =
+        "Estimated Price: Rs " + base;
 
-   function openDatePicker() {
+    document.getElementById("price-input").value = base;
+}
+
+function openDatePicker() {
     const dateInput = document.getElementById("date");
     if(dateInput.showPicker){
         dateInput.showPicker();
     } else {
         dateInput.focus();
     }
-  }
+}
 
-   function validateName() {
+function validateName() {
     const name = document.getElementById('customer-name');
     const error = document.getElementById('name-error');
     const regex = /^[A-Za-z\s]+$/;
@@ -408,9 +464,9 @@ input[type="submit"]:hover{
         name.classList.remove('valid');
         error.style.display = 'block';
     }
-  }
+}
 
-  function validatePhone(input){
+function validatePhone(input){
     const val = input.value.trim();
     const error = input.id === 'customer-phone' ? document.getElementById('phone-error') : document.getElementById('whatsapp-error');
     if(/^\d{11,14}$/.test(val)){
@@ -422,9 +478,9 @@ input[type="submit"]:hover{
         input.classList.remove('valid');
         error.style.display = 'block';
     }
-   }
+}
 
-   document.getElementById('suitForm').addEventListener('submit', function(e){
+document.getElementById('suitForm').addEventListener('submit', function(e){
     const name = document.getElementById('customer-name');
     const phone = document.getElementById('customer-phone');
     const whatsapp = document.getElementById('customer-whatsapp');
@@ -447,53 +503,51 @@ input[type="submit"]:hover{
         document.getElementById('whatsapp-error').style.display='block';
         return;
     }
-  });
-   function toggleMeasurements(){
+});
+
+function toggleMeasurements(){
     const box = document.getElementById("measurementsBox");
-    box.style.display = document.getElementById("hasMeasurements").checked
-        ? "block" : "none";
-  }
-  document.querySelectorAll(".measure").forEach(input => {
+    box.style.display = document.getElementById("hasMeasurements").checked ? "block" : "none";
+}
+
+document.querySelectorAll(".measure").forEach(input => {
     input.addEventListener("input", function () {
         this.value = this.value.replace(/[^0-9]/g, "");
         if (this.value.length > 2) {
             this.value = this.value.slice(0, 2);
         }
     });
-  });
-  function setMinDate() {
-    const dateInput = document.getElementById("date");
+});
 
+function setMinDate() {
+    const dateInput = document.getElementById("date");
     const now = new Date();
     const today = new Date(
         now.getFullYear(),
         now.getMonth(),
         now.getDate()
     );
-
     const yyyy = today.getFullYear();
     const mm = String(today.getMonth() + 1).padStart(2, '0');
     const dd = String(today.getDate()).padStart(2, '0');
-
     const minDate = `${yyyy}-${mm}-${dd}`;
-
     dateInput.setAttribute("min", minDate);
-   }
-   window.addEventListener("DOMContentLoaded", setMinDate);
-   function validateDate() {
+}
+
+window.addEventListener("DOMContentLoaded", setMinDate);
+
+function validateDate() {
     const dateInput = document.getElementById("date");
     if (!dateInput.value) return;
-
     const selected = new Date(dateInput.value);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-
     if (selected < today) {
         alert("Past dates are not allowed. Please select today or a future date.");
         dateInput.value = "";
     }
-  }
- </script>
+}
+</script>
 
 </body>
 </html>

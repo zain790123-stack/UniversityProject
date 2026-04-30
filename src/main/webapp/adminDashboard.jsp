@@ -1,11 +1,43 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.sql.*, java.util.*, java.text.SimpleDateFormat" %>
-
+<%@ page import="java.sql.*, java.util.*, java.text.SimpleDateFormat, java.text.DecimalFormat" %>
  <%
    String adminName = (String) session.getAttribute("adminName");
    String adminEmail = (String) session.getAttribute("adminEmail");
    Integer adminIdInt = (Integer) session.getAttribute("adminId");
    String adminId = adminIdInt != null ? adminIdInt.toString() : "";
+   DecimalFormat df = new DecimalFormat("#,##0.00");
+   // Suit financials
+   double suitPrice = 4000.0;
+   double suitExpense = 200.0;
+   double suitProfitPerRequest = suitPrice - suitExpense;
+   
+   // Alteration financials
+   double alterationPrice = 2000.0;
+   double alterationExpense = 200.0;
+   double alterationProfitPerRequest = alterationPrice - alterationExpense;
+   
+   // Order financials
+   double totalOrderPrice = 0;
+   double totalOrderProfit = 0;
+   double totalOrderExpense = 0;
+   
+   // Totals
+   double totalSuitRevenue = 0;
+   double totalSuitProfit = 0;
+   double totalSuitExpense = 0;
+   
+   double totalAlterationRevenue = 0;
+   double totalAlterationProfit = 0;
+   double totalAlterationExpense = 0;
+   
+   double grandTotalRevenue = 0;
+   double grandTotalProfit = 0;
+   double grandTotalExpense = 0;
+   
+   int totalCompletedSuits = 0;
+   int totalCompletedAlterations = 0;
+   int totalDeliveredOrders = 0;
+
 
    if (adminName == null || adminEmail == null) {
       response.sendRedirect("unifiedLogin.jsp");
@@ -41,7 +73,6 @@
           Map<String, Object> row = new HashMap<>();
             row.put("id", rs.getInt("id"));
             row.put("request_id", rs.getString("request_id"));
-            row.put("garment", rs.getString("garment"));
             row.put("slai", rs.getString("slai"));
             row.put("deadline", rs.getDate("deadline"));
             row.put("customer_name", rs.getString("customer_name"));
@@ -52,13 +83,25 @@
             row.put("cloth_image", rs.getString("cloth_image"));
             row.put("client_image", rs.getString("client_image"));
             row.put("measurements", rs.getString("measurements"));
+            row.put("price", rs.getString("price"));
             row.put("additional_notes", rs.getString("additional_notes"));
             row.put("status", rs.getString("status") != null ? rs.getString("status") : "pending");
+            totalSuitRevenue += suitPrice;
+            totalSuitExpense += suitExpense;
+            totalSuitProfit += suitProfitPerRequest;
+            String status = rs.getString("status");   
+            
+            if ("delivered".equals(status)) {
+                totalCompletedSuits++;
+            }
             row.put("created_at", rs.getTimestamp("created_at"));
             row.put("approval_date", rs.getTimestamp("approval_date"));
           suitRequests.add(row);
           }
        suitCount = suitRequests.size();
+       totalSuitRevenue = suitCount * suitPrice;
+       totalSuitExpense = suitCount * suitExpense;
+       totalSuitProfit = suitCount * suitProfitPerRequest;
      rs.close();
      ps.close();
     
@@ -69,7 +112,7 @@
         Map<String, Object> row = new HashMap<>();
         row.put("id", rs.getInt("id"));
         row.put("request_id", rs.getString("request_id"));
-        row.put("garment", rs.getString("garment"));
+        row.put("price", rs.getString("price"));
         row.put("alteration_type", rs.getString("alteration_type"));
         row.put("deadline", rs.getDate("deadline"));
         row.put("customer_name", rs.getString("customer_name"));
@@ -80,11 +123,22 @@
         row.put("cloth_image", rs.getString("cloth_image"));
         row.put("additional_notes", rs.getString("additional_notes"));
         row.put("status", rs.getString("status") != null ? rs.getString("status") : "pending");
+        totalAlterationRevenue += alterationPrice;
+        totalAlterationExpense += alterationExpense;
+        totalAlterationProfit += alterationProfitPerRequest;
+        String status = rs.getString("status");   
+
+        if ("delivered".equals(status)) {
+            totalCompletedAlterations++;
+        }
         row.put("created_at", rs.getTimestamp("created_at"));
         row.put("approval_date", rs.getTimestamp("approval_date"));
         alterationRequests.add(row);
     }
     alterationCount = alterationRequests.size();
+    totalAlterationRevenue = alterationCount * alterationPrice;
+    totalAlterationExpense = alterationCount * alterationExpense;
+    totalAlterationProfit = alterationCount * alterationProfitPerRequest;
     rs.close();
     ps.close();
     
@@ -139,6 +193,17 @@
         row.put("address", rs.getString("address"));
         row.put("product_name", rs.getString("product_name"));
         row.put("price", rs.getDouble("price"));
+        double price = rs.getDouble("price");   
+        double orderExpense = 200.0;
+        double orderProfit = price - orderExpense;
+        totalOrderPrice += price;
+        totalOrderExpense += orderExpense;
+        totalOrderProfit += orderProfit;
+        
+        String status = rs.getString("status") != null ? rs.getString("status") : "pending";
+        if ("delivered".equals(status)) {
+            totalDeliveredOrders++;
+        }
         row.put("payment_method", rs.getString("payment_method"));
         row.put("order_id", rs.getString("order_id"));
         row.put("status", rs.getString("status") != null ? rs.getString("status") : "pending");
@@ -164,7 +229,10 @@
     rs.close();
     ps.close();
     
-}
+    grandTotalRevenue = totalSuitRevenue + totalAlterationRevenue + totalOrderPrice;
+    grandTotalExpense = totalSuitExpense + totalAlterationExpense + totalOrderExpense;
+    grandTotalProfit = totalSuitProfit + totalAlterationProfit + totalOrderProfit;
+    }
 catch(Exception e) {
     e.printStackTrace();
     out.println("<script>alert('Database data Fetching error: " + e.getMessage() + "');</script>");
@@ -847,7 +915,85 @@ finally {
             <div class="stat-label">Reviews</div>
         </div>
     </div>
+    <div class="financial-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px;">
+        
+        <div style="background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 15px; padding: 20px; border-left: 4px solid #10b981;">
+            <h3 style="font-size: 0.9rem; margin-bottom: 10px; opacity: 0.8;"><i class="fas fa-chart-line"></i> Total Profit</h3>
+            <div style="font-size: 1.8rem; font-weight: bold; color: #10b981;">Rs <%= df.format(grandTotalProfit) %></div>
+            <div style="font-size: 0.7rem; opacity: 0.7;">Revenue - Expense (Rs 200 per request)</div>
+        </div>
+        
+        <div style="background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 15px; padding: 20px; border-left: 4px solid #3b82f6;">
+            <h3 style="font-size: 0.9rem; margin-bottom: 10px; opacity: 0.8;"><i class="fas fa-dollar-sign"></i> Total Revenue</h3>
+            <div style="font-size: 1.8rem; font-weight: bold; color: #3b82f6;">Rs <%= df.format(grandTotalRevenue) %></div>
+            <div style="font-size: 0.7rem; opacity: 0.7;">Suits (Rs 4,000) + Alterations (Rs 2,000) + Orders</div>
+        </div>
+        
+        <div style="background: linear-gradient(135deg, #1e293b, #0f172a); border-radius: 15px; padding: 20px; border-left: 4px solid #ef4444;">
+            <h3 style="font-size: 0.9rem; margin-bottom: 10px; opacity: 0.8;"><i class="fas fa-receipt"></i> Total Expense</h3>
+            <div style="font-size: 1.8rem; font-weight: bold; color: #ef4444;">Rs <%= df.format(grandTotalExpense) %></div>
+            <div style="font-size: 0.7rem; opacity: 0.7;">Rs 200 × <%= suitCount + alterationCount + ordersCount %> requests</div>
+        </div>
+    </div>
 
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px;">
+        
+        <div style="background: rgba(139, 92, 246, 0.1); border-radius: 12px; padding: 15px;">
+            <h4 style="color: #8b5cf6;"><i class="fas fa-suitcase"></i> Suits Financial</h4>
+            <div style="margin-top: 10px;">
+                <div>Revenue: <strong style="color: #3b82f6;">Rs <%= df.format(totalSuitRevenue) %></strong></div>
+                <div>Expense: <strong style="color: #ef4444;">Rs <%= df.format(totalSuitExpense) %></strong> (Rs 200 × <%= suitCount %>)</div>
+                <div>Profit: <strong style="color: #10b981;">Rs <%= df.format(totalSuitProfit) %></strong></div>
+                <div>Rate: Rs 4,000 per suit | Completed: <%= totalCompletedSuits %></div>
+            </div>
+        </div>
+        
+        <div style="background: rgba(245, 158, 11, 0.1); border-radius: 12px; padding: 15px;">
+            <h4 style="color: #f59e0b;"><i class="fas fa-cut"></i> Alterations Financial</h4>
+            <div style="margin-top: 10px;">
+                <div>Revenue: <strong style="color: #3b82f6;">Rs <%= df.format(totalAlterationRevenue) %></strong></div>
+                <div>Expense: <strong style="color: #ef4444;">Rs <%= df.format(totalAlterationExpense) %></strong> (Rs 200 × <%= alterationCount %>)</div>
+                <div>Profit: <strong style="color: #10b981;">Rs <%= df.format(totalAlterationProfit) %></strong></div>
+                <div>Rate: Rs 2,000 per alteration | Completed: <%= totalCompletedAlterations %></div>
+            </div>
+        </div>
+        
+        <div style="background: rgba(6, 182, 212, 0.1); border-radius: 12px; padding: 15px;">
+            <h4 style="color: #06b6d4;"><i class="fas fa-shopping-cart"></i> Orders Financial</h4>
+            <div style="margin-top: 10px;">
+                <div>Revenue: <strong style="color: #3b82f6;">Rs <%= df.format(totalOrderPrice) %></strong></div>
+                <div>Expense: <strong style="color: #ef4444;">Rs <%= df.format(totalOrderExpense) %></strong> (Rs 200 × <%= ordersCount %>)</div>
+                <div>Profit: <strong style="color: #10b981;">Rs <%= df.format(totalOrderProfit) %></strong></div>
+                <div>Delivered: <%= totalDeliveredOrders %> orders</div>
+            </div>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
+        <div style="background: rgba(16, 185, 129, 0.15); padding: 12px; border-radius: 8px; text-align: center;">
+            <i class="fas fa-chart-simple"></i>
+            <div style="font-size: 1.3rem; font-weight: bold; color: #10b981;">Rs <%= df.format(grandTotalProfit) %></div>
+            <div style="font-size: 0.7rem;">Net Profit</div>
+        </div>
+        <div style="background: rgba(59, 130, 246, 0.15); padding: 12px; border-radius: 8px; text-align: center;">
+            <i class="fas fa-chart-line"></i>
+            <div style="font-size: 1.3rem; font-weight: bold; color: #3b82f6;">Rs <%= df.format(grandTotalRevenue) %></div>
+            <div style="font-size: 0.7rem;">Gross Revenue</div>
+        </div>
+        <div style="background: rgba(239, 68, 68, 0.15); padding: 12px; border-radius: 8px; text-align: center;">
+            <i class="fas fa-calculator"></i>
+            <div style="font-size: 1.3rem; font-weight: bold; color: #ef4444;">Rs <%= df.format(grandTotalExpense) %></div>
+            <div style="font-size: 0.7rem;">Total Expense</div>
+        </div>
+        <div style="background: rgba(139, 92, 246, 0.15); padding: 12px; border-radius: 8px; text-align: center;">
+            <i class="fas fa-percent"></i>
+            <div style="font-size: 1.3rem; font-weight: bold; color: #8b5cf6;">
+                <% double profitMargin = grandTotalRevenue > 0 ? (grandTotalProfit * 100 / grandTotalRevenue) : 0; %>
+                <%= String.format("%.1f", profitMargin) %>%
+            </div>
+            <div style="font-size: 0.7rem;">Profit Margin</div>
+        </div>
+    </div>
     <section id="dashboard" class="section active">
         <div class="section-header">
             <h2 class="section-title">
@@ -902,12 +1048,12 @@ finally {
                     <tr>
                         <th>ID</th>
                         <th>Request ID</th>
-                        <th>Garment</th>
                         <th>Slai</th>
                         <th>Customer</th>
                         <th>Phone</th>
                         <th>Tailor</th>
-                        <th>Deadline</th>
+                        <th>Deadline</th> 
+                        <th>Price (Rs)</th>  
                         <th>Image</th>
                         <th>Status</th>
                         <th>Created</th>
@@ -928,12 +1074,14 @@ finally {
                     <tr id="suit-row-<%= suitRequest.get("id") %>">
                         <td><%= suitRequest.get("id") %></td>
                         <td><%= suitRequest.get("request_id") %></td>
-                        <td><%= suitRequest.get("garment") %></td>
                         <td class="text-preview"><%= suitRequest.get("slai") != null ? suitRequest.get("slai") : "" %></td>
                         <td><%= suitRequest.get("customer_name") %></td>
-                        <td><%= suitRequest.get("customer_phone") %></td>
+                        <td><%= suitRequest.get("customer_phone") %></td>                        
                         <td><%= suitRequest.get("tailor_name") %></td>
-                        <td><%= deadline != null ? deadline : "Not set" %></td>
+                        <td><%= suitRequest.get("deadline") %></td>
+                        <td><%= suitRequest.get("price") %></td>
+                        
+                        
                         <td>
                             <% if (clothImage != null && !clothImage.isEmpty()) { %>
                             <img src="uploads/custom_tailor/clothPicture/<%= clothImage %>" 
@@ -1037,12 +1185,12 @@ finally {
                     <tr>
                         <th>ID</th>
                         <th>Request ID</th>
-                        <th>Garment</th>
                         <th>Alteration Type</th>
                         <th>Customer</th>
                         <th>Phone</th>
                         <th>Tailor</th>
                         <th>Deadline</th>
+                        <th>Price (Rs)</th>  
                         <th>Image</th>
                         <th>Status</th>
                         <th>Created</th>
@@ -1062,12 +1210,12 @@ finally {
                     <tr id="alteration-row-<%= alterationRequest.get("id") %>">
                         <td><%= alterationRequest.get("id") %></td>
                         <td><%= alterationRequest.get("request_id") %></td>
-                        <td><%= alterationRequest.get("garment") %></td>
                         <td class="text-preview"><%= alterationRequest.get("alteration_type") != null ? alterationRequest.get("alteration_type") : "" %></td>
                         <td><%= alterationRequest.get("customer_name") %></td>
                         <td><%= alterationRequest.get("customer_phone") %></td>
                         <td><%= alterationRequest.get("tailor_name") %></td>
                         <td><%= deadline != null ? deadline : "Not set" %></td>
+                        <td><%= alterationRequest.get("price") %></td>
                         <td>
                             <% if (clothImage != null && !clothImage.isEmpty()) { %>
                             <img src="uploads/alteration/<%= clothImage %>"

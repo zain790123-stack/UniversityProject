@@ -25,6 +25,15 @@ public class TailorRequestActionServlet extends HttpServlet {
         String action = request.getParameter("action");
         String table = request.getParameter("table");
         
+        String priceParam = request.getParameter("price");
+        String type = request.getParameter("type");
+        
+        if (priceParam != null && !priceParam.trim().isEmpty()) {
+
+        	updatePrice(request, response, idParam, priceParam, type);
+            return;
+        }
+        
         if (idParam == null || idParam.trim().isEmpty() || 
             action == null || action.trim().isEmpty() ||
             table == null || table.trim().isEmpty()) {
@@ -130,6 +139,97 @@ public class TailorRequestActionServlet extends HttpServlet {
             response.getWriter().write("error: " + e.getMessage());
         } finally {
            
+            try { if (pstmt != null) pstmt.close(); } catch (SQLException e) {}
+            try { if (conn != null) conn.close(); } catch (SQLException e) {}
+        }
+    }
+    
+    private void updatePrice(HttpServletRequest request, HttpServletResponse response, 
+                             String idParam, String priceParam, String type) 
+            throws IOException {
+        
+        response.setContentType("text/plain");
+        response.setCharacterEncoding("UTF-8");
+        
+        if (idParam == null || idParam.trim().isEmpty() || 
+            priceParam == null || priceParam.trim().isEmpty() ||
+            type == null || type.trim().isEmpty()) {
+            response.getWriter().write("error: Missing parameters");
+            return;
+        }
+        
+        int id;
+        double price;
+        try {
+            id = Integer.parseInt(idParam);
+            price = Double.parseDouble(priceParam);
+            if (price < 0) {
+                response.getWriter().write("error: Price cannot be negative");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            response.getWriter().write("error: Invalid number format");
+            return;
+        }
+        
+        if (!type.equals("suit") && !type.equals("alteration")) {
+            response.getWriter().write("error: Invalid request type");
+            return;
+        }
+        
+        String tableName = type + "_requests";
+        
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+            
+            String tailorName = (String) request.getSession().getAttribute("tailorName");
+            if (tailorName == null) {
+                response.getWriter().write("error: Session expired");
+                return;
+            }
+            
+            String checkSql = "SELECT id FROM " + tableName + " WHERE id=? AND tailor_name=?";
+            pstmt = conn.prepareStatement(checkSql);
+            pstmt.setInt(1, id);
+            pstmt.setString(2, tailorName);
+            ResultSet rs = pstmt.executeQuery();
+            
+            if (!rs.next()) {
+                response.getWriter().write("error: Request not found or unauthorized");
+                return;
+            }
+            rs.close();
+            pstmt.close();
+            
+            String updateSql = "UPDATE " + tableName + " SET price = ? WHERE id = ? AND tailor_name = ?";
+            pstmt = conn.prepareStatement(updateSql);
+            pstmt.setDouble(1, price);
+            pstmt.setInt(2, id);
+            pstmt.setString(3, tailorName);
+            
+            int rowsAffected = pstmt.executeUpdate();
+            
+            if (rowsAffected > 0) {
+                request.getSession().setAttribute("successMsg", "Price updated successfully");
+                response.getWriter().write("success");
+            } else {
+                response.getWriter().write("error: Failed to update price");
+            }
+            
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            response.getWriter().write("error: Driver not found");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            response.getWriter().write("error: Database error - " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.getWriter().write("error: " + e.getMessage());
+        } finally {
             try { if (pstmt != null) pstmt.close(); } catch (SQLException e) {}
             try { if (conn != null) conn.close(); } catch (SQLException e) {}
         }

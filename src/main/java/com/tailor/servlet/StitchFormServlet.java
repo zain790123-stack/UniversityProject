@@ -37,6 +37,12 @@ public class StitchFormServlet extends HttpServlet {
         String customerWhatsapp = request.getParameter("customer-whatsapp");
         String customerAddress = request.getParameter("customer-address");
         String hasMeasurements = request.getParameter("hasMeasurements");
+        double price = 0;
+        try {
+            price = Double.parseDouble(request.getParameter("price"));
+        } catch (Exception e) {
+            price = 0;
+        }
         StringBuilder measurements = new StringBuilder();
 
         if ("yes".equals(hasMeasurements)) {
@@ -131,7 +137,7 @@ public class StitchFormServlet extends HttpServlet {
         	    }
             Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/tailor_db", "root", "12345");
 
-            String sql = "INSERT INTO suit_requests (garment,request_id, slai, deadline, customer_name, customer_phone, customer_whatsapp, customer_address, additional_notes,tailor_name, cloth_image,client_image, measurements) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?)";
+            String sql = "INSERT INTO suit_requests (garment,request_id, slai, deadline, customer_name, customer_phone, customer_whatsapp, customer_address, additional_notes,tailor_name, cloth_image,client_image, measurements,price) VALUES (?,?,?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?)";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, garment);
             pstmt.setString(2,requestId );
@@ -146,6 +152,7 @@ public class StitchFormServlet extends HttpServlet {
             pstmt.setString(11, clothImage); 
             pstmt.setString(12, FaceImage); 
             pstmt.setString(13, measurementsText); 
+            pstmt.setDouble(14, price);
             int rows = pstmt.executeUpdate();
             if (rows > 0) {
                 System.out.println("Suit Stitching request submitted successfully!");
