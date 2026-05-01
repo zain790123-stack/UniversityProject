@@ -241,7 +241,6 @@ finally {
     if (conShop != null) try { conShop.close(); } catch(SQLException e) {}
 }
 %>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
