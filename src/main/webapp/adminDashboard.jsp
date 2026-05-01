@@ -6,22 +6,19 @@
    Integer adminIdInt = (Integer) session.getAttribute("adminId");
    String adminId = adminIdInt != null ? adminIdInt.toString() : "";
    DecimalFormat df = new DecimalFormat("#,##0.00");
-   // Suit financials
+   
    double suitPrice = 4000.0;
    double suitExpense = 200.0;
    double suitProfitPerRequest = suitPrice - suitExpense;
    
-   // Alteration financials
    double alterationPrice = 2000.0;
    double alterationExpense = 200.0;
    double alterationProfitPerRequest = alterationPrice - alterationExpense;
    
-   // Order financials
    double totalOrderPrice = 0;
    double totalOrderProfit = 0;
    double totalOrderExpense = 0;
    
-   // Totals
    double totalSuitRevenue = 0;
    double totalSuitProfit = 0;
    double totalSuitExpense = 0;
